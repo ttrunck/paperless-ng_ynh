@@ -1,7 +1,7 @@
-SOURCE_URL=url of app's source
-SOURCE_SUM=sha256 checksum
+SOURCE_URL=https://github.com/jonaswinkler/paperless-ng/releases/download/ng-1.5.0/paperless-ng-1.5.0.tar.xz
+SOURCE_SUM=a154aad005a4b2e582f35305e71899e996dd28ab6aaa98662fec48cc92da0ccc
 SOURCE_SUM_PRG=sha256sum
-SOURCE_FORMAT=tar.gz
+SOURCE_FORMAT=tar.xz
 SOURCE_IN_SUBDIR=true
 SOURCE_FILENAME=
 SOURCE_EXTRACT=true

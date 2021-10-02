@@ -3,12 +3,9 @@ multipass launch -c 4 -m 4G -d 10G --name paperless
 multipass shell paperless
 
 sudo apt update
-sudo apt install python3 python3-pip python3-dev imagemagick fonts-liberation optipng gnupg libpq-dev libmagic-dev mime-support -y
-sudo apt install unpaper ghostscript icc-profiles-free qpdf liblept5 libxml2 pngquant zlib1g tesseract-ocr -y
-sudo apt install redis-server -y
+sudo apt install python3 python3-pip python3-dev imagemagick fonts-liberation optipng gnupg libpq-dev libmagic-dev mime-support unpaper ghostscript icc-profiles-free qpdf liblept5 libxml2 pngquant zlib1g tesseract-ocr redis-server postgresql nginx -y
 sudo sed -i 's/^supervised no$/supervised systemd/' /etc/redis/redis.conf
 sudo systemctl restart redis.service
-sudo apt install postgresql -y
 
 sudo -u postgres psql -c "create database paperless"
 sudo -u postgres psql -c "create user paperless with password 'paperless'"
@@ -43,7 +40,6 @@ sudo systemctl start paperless-consumer.service
 sudo systemctl start paperless-scheduler.service
 sudo systemctl start paperless-webserver.service
 
-sudo apt install nginx -y
 sudo vim /etc/nginx/sites-available/paperless
 put
 ```
