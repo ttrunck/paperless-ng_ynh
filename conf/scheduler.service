@@ -3,9 +3,9 @@ Description=Paperless scheduler
 Requires=redis.service
 
 [Service]
-User=paperless
-Group=paperless
-WorkingDirectory=/opt/paperless/src
+User=__APP__
+Group=__APP__
+WorkingDirectory=__FINALPATH__/src
 ExecStart=python3 manage.py qcluster
 
 [Install]
