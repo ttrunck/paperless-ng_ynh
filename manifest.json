@@ -37,21 +37,6 @@
                 "type": "path",
                 "example": "/paperless",
                 "default": "/paperless"
-            },
-            {
-                "name": "admin",
-                "type": "user",
-                "example": "johndoe"
-            },
-            {
-                "name": "password",
-                "type": "password",
-                "example": "Choose a password"
-            },
-            {
-                "name": "is_public",
-                "type": "boolean",
-                "default": true
             }
         ]
     }
