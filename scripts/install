@@ -26,10 +26,11 @@ ynh_abort_if_errors
 
 domain=$YNH_APP_ARG_DOMAIN
 path_url=$YNH_APP_ARG_PATH
-admin=$YNH_APP_ARG_ADMIN
-is_public=$YNH_APP_ARG_IS_PUBLIC
-password=$YNH_APP_ARG_PASSWORD
 language="en"
+
+admin="paperless"
+password=$(ynh_string_random)
+paperless_secret=$(ynh_string_random)
 
 ### If it's a multi-instance app, meaning it can be installed several times independently
 ### The id of the app as stated in the manifest is available as $YNH_APP_ID
@@ -71,7 +72,6 @@ ynh_script_progression --message="Storing installation settings..." --time --wei
 
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
-ynh_app_setting_set --app=$app --key=admin --value=$admin
 ynh_app_setting_set --app=$app --key=language --value=$language
 
 #=================================================
@@ -174,12 +174,6 @@ ynh_script_progression --message="Configuring NGINX web server..." --time --weig
 ynh_add_nginx_config
 
 #=================================================
-# SPECIFIC SETUP
-#=================================================
-# ...
-#=================================================
-
-#=================================================
 # CREATE DATA DIRECTORY
 #=================================================
 ynh_script_progression --message="Creating a data directory..." --time --weight=1
@@ -230,6 +224,22 @@ ynh_add_config --template="paperless.conf" --destination="$final_path/paperless.
 # for example if the app is expected to be able to modify its own config
 chmod 400 "$final_path/paperless.conf"
 chown $app:$app "$final_path/paperless.conf"
+
+#=================================================
+# SPECIFIC SETUP
+#=================================================
+
+pushd $final_path
+sudo -Hu $app python3 -m pip install --upgrade pip
+sudo -Hu $app python3 -m pip install -r requirements.txt --no-warn-script-location
+sudo -Hu $app mkdir -p $datadir/media $datadir/consume
+popd
+pushd $final_path/src
+sudo -Hu $app python3 manage.py migrate
+sudo -Hu $app DJANGO_SUPERUSER_PASSWORD=$password python3 manage.py createsuperuser --noinput --username $admin --email root@localhost
+popd
+
+#=================================================
 
 #=================================================
 # SETUP SYSTEMD
@@ -325,23 +335,10 @@ ynh_systemd_action --service_name=$app-webserver --action="start" --log_path="/v
 #=================================================
 # SETUP FAIL2BAN
 #=================================================
-ynh_script_progression --message="Configuring Fail2Ban..." --time --weight=1
+# ynh_script_progression --message="Configuring Fail2Ban..." --time --weight=1
 
 # Create a dedicated Fail2Ban config
-ynh_add_fail2ban_config --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
-
-#=================================================
-# SETUP SSOWAT
-#=================================================
-ynh_script_progression --message="Configuring permissions..." --time --weight=1
-
-# Make app public if necessary
-if [ $is_public -eq 1 ]
-then
-	# Everyone can access the app.
-	# The "main" permission is automatically created before the install script.
-	ynh_permission_update --permission="main" --add="visitors"
-fi
+# ynh_add_fail2ban_config --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
 
 #=================================================
 # RELOAD NGINX
