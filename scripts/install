@@ -110,8 +110,8 @@ ynh_script_progression --message="Installing dependencies..." --time --weight=1
 ###		- Remove the variable "pkg_dependencies" in _common.sh
 ###		- As well as the section "REINSTALL DEPENDENCIES" in the restore script
 ###		- And the section "UPGRADE DEPENDENCIES" in the upgrade script
-ynh_psql_test_if_first_run
 ynh_install_app_dependencies $pkg_dependencies
+ynh_psql_test_if_first_run
 
 #=================================================
 # CREATE DEDICATED USER
