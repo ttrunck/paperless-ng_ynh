@@ -115,7 +115,7 @@ fi
 #=================================================
 
 domain=$YNH_APP_NEW_DOMAIN
-path=$YNH_APP_NEW_PATH
+paperless_set_paperless_path_url $YNH_APP_NEW_PATH
 ynh_add_config --template="paperless.conf" --destination="$final_path/paperless.conf"
 
 #=================================================

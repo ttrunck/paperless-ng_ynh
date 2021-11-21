@@ -11,6 +11,15 @@ pkg_dependencies="postgresql python3 python3-pip python3-dev imagemagick fonts-l
 # PERSONAL HELPERS
 #=================================================
 
+paperless_set_paperless_path_url () {
+    if [[ "$1" == "/" ]]
+    then
+        paperless_path_url=""
+    else
+        paperless_path_url=$1
+    fi
+}
+
 #=================================================
 # EXPERIMENTAL HELPERS
 #=================================================

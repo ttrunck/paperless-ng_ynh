@@ -26,6 +26,7 @@ ynh_abort_if_errors
 
 domain=$YNH_APP_ARG_DOMAIN
 path_url=$YNH_APP_ARG_PATH
+paperless_set_paperless_path_url $path_url
 language="en"
 
 ### If it's a multi-instance app, meaning it can be installed several times independently
