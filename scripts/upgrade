@@ -22,6 +22,12 @@ admin=$(ynh_app_setting_get --app=$app --key=admin)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 language=$(ynh_app_setting_get --app=$app --key=language)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+db_user=$db_name
+db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
+
+paperless_admin=$(ynh_app_setting_get --app=$app --key=paperless_admin)
+paperless_secret=$(ynh_app_setting_get --app=$app --key=paperless_secret)
+datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 
 #=================================================
 # CHECK VERSION
@@ -56,7 +62,10 @@ ynh_abort_if_errors
 #=================================================
 ynh_script_progression --message="Stopping a systemd service..." --time --weight=1
 
-ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name=$app-consumer --action="stop" --log_path="/var/log/$app/$app-consumer.log"
+ynh_systemd_action --service_name=$app-scheduler --action="stop" --log_path="/var/log/$app/$app-scheduler.log"
+ynh_systemd_action --service_name=$app-webserver --action="stop" --log_path="/var/log/$app/$app-webserver.log"
+
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
@@ -202,7 +211,10 @@ yunohost service add $app --description="A short description of the app" --log="
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --time --weight=1
 
-ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name=$app-consumer --action="start" --log_path="/var/log/$app/$app-consumer.log"
+ynh_systemd_action --service_name=$app-scheduler --action="start" --log_path="/var/log/$app/$app-scheduler.log"
+ynh_systemd_action --service_name=$app-webserver --action="start" --log_path="/var/log/$app/$app-webserver.log"
+
 
 #=================================================
 # UPGRADE FAIL2BAN

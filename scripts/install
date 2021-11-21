@@ -28,10 +28,6 @@ domain=$YNH_APP_ARG_DOMAIN
 path_url=$YNH_APP_ARG_PATH
 language="en"
 
-admin="paperless"
-password=$(ynh_string_random)
-paperless_secret=$(ynh_string_random)
-
 ### If it's a multi-instance app, meaning it can be installed several times independently
 ### The id of the app as stated in the manifest is available as $YNH_APP_ID
 ### The instance number is available as $YNH_APP_INSTANCE_NUMBER (equals "1", "2"...)
@@ -43,6 +39,13 @@ paperless_secret=$(ynh_string_random)
 ### guaranteed to be unique. This is a good unique identifier to define installation path,
 ### db names...
 app=$YNH_APP_INSTANCE_NAME
+
+paperless_admin="paperless"
+password=$(ynh_string_random)
+paperless_secret=$(ynh_string_random)
+
+ynh_app_setting_set --app=$app --key=paperless_admin --value=$paperless_admin
+ynh_app_setting_set --app=$app --key=paperless_secret --value=$paperless_secret
 
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
@@ -236,7 +239,7 @@ sudo -Hu $app mkdir -p $datadir/media $datadir/consume
 popd
 pushd $final_path/src
 sudo -Hu $app python3 manage.py migrate
-sudo -Hu $app DJANGO_SUPERUSER_PASSWORD=$password python3 manage.py createsuperuser --noinput --username $admin --email root@localhost
+sudo -Hu $app DJANGO_SUPERUSER_PASSWORD=$password python3 manage.py createsuperuser --noinput --username $paperless_admin --email root@localhost
 popd
 
 #=================================================

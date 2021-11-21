@@ -30,9 +30,12 @@ ynh_script_progression --message="Loading installation settings..." --time --wei
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 
 # Add settings here as needed by your application
-#db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-#db_user=$db_name
-#db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
+db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+db_user=$db_name
+db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
+paperless_admin=$(ynh_app_setting_get --app=$app --key=paperless_admin)
+paperless_secret=$(ynh_app_setting_get --app=$app --key=paperless_secret)
+datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 
 #=================================================
 # BACKUP BEFORE CHANGE URL THEN ACTIVE TRAP
@@ -74,7 +77,9 @@ fi
 #=================================================
 ynh_script_progression --message="Stopping a systemd service..." --time --weight=1
 
-ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name=$app-consumer --action="stop" --log_path="/var/log/$app/$app-consumer.log"
+ynh_systemd_action --service_name=$app-scheduler --action="stop" --log_path="/var/log/$app/$app-scheduler.log"
+ynh_systemd_action --service_name=$app-webserver --action="stop" --log_path="/var/log/$app/$app-webserver.log"
 
 #=================================================
 # MODIFY URL IN NGINX CONF
@@ -108,7 +113,11 @@ fi
 #=================================================
 # SPECIFIC MODIFICATIONS
 #=================================================
-# ...
+
+domain=$YNH_APP_NEW_DOMAIN
+path=$YNH_APP_NEW_PATH
+ynh_add_config --template="paperless.conf" --destination="$final_path/paperless.conf"
+
 #=================================================
 
 #=================================================
@@ -118,7 +127,10 @@ fi
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --time --weight=1
 
-ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name=$app-consumer --action="start" --log_path="/var/log/$app/$app-consumer.log"
+ynh_systemd_action --service_name=$app-scheduler --action="start" --log_path="/var/log/$app/$app-scheduler.log"
+ynh_systemd_action --service_name=$app-webserver --action="start" --log_path="/var/log/$app/$app-webserver.log"
+
 
 #=================================================
 # RELOAD NGINX
